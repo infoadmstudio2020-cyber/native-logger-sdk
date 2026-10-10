@@ -1,0 +1,8 @@
+jdk:
+  - openjdk17
+before_install:
+  - git config --global --add safe.directory /build || true
+  - git config --global --add safe.directory "$PWD" || true
+  - chmod +x gradlew
+install:
+  - ./gradlew clean :library:assembleRelease :library:publishToMavenLocal --stacktrace

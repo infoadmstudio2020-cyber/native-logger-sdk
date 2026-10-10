@@ -1,0 +1,25 @@
+# Android / Gradle
+*.iml
+.gradle/
+.idea/
+local.properties
+.DS_Store
+build/
+captures/
+.externalNativeBuild/
+.cxx/
+
+# Keystore
+*.jks
+*.keystore
+
+# Generated
+gen/
+out/
+
+# Lint
+lint/
+
+# Distribution
+*.aar
+*.apk

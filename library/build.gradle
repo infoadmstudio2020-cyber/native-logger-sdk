@@ -1,0 +1,88 @@
+plugins {
+    id 'com.android.library'
+    id 'maven-publish'
+}
+
+android {
+    namespace 'com.roni.library.logger'
+    compileSdk 34
+
+    defaultConfig {
+        minSdk 21
+        targetSdk 34
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    publishing {
+        singleVariant('release') {
+            withSourcesJar()
+            withJavadocJar()
+        }
+    }
+}
+
+dependencies {
+    implementation 'androidx.annotation:annotation:1.7.1'
+    implementation 'androidx.core:core:1.12.0'
+
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+    api 'com.github.infoadmstudio2020-cyber:native-runtime-contracts:v1.0.9'
+}
+
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                from components.release
+
+                groupId = project.findProperty('GROUP') ?: 'com.github.infoadmstudio2020-cyber'
+                artifactId = project.findProperty('POM_ARTIFACT_ID') ?: 'native-logger-sdk'
+                version = project.findProperty('VERSION_NAME') ?: 'v1.0.1'
+
+                pom {
+                    name = 'NativeLoggerSDK'
+                    description = 'Lightweight Android Native Logger SDK with Sink and Formatter support'
+                    url = 'https://github.com/infoadmstudio2020-cyber/native-logger-sdk'
+                    licenses {
+                        license {
+                            name = 'Apache-2.0'
+                            url = 'https://opensource.org/licenses/Apache-2.0'
+                        }
+                    }
+                    developers {
+                        developer {
+                            id = 'infoadmstudio2020-cyber'
+                            name = 'RONi'
+                        }
+                    }
+                    scm {
+                        connection = 'scm:git:git://github.com/infoadmstudio2020-cyber/native-logger-sdk.git'
+                        developerConnection = 'scm:git:ssh://github.com:infoadmstudio2020-cyber/native-logger-sdk.git'
+                        url = 'https://github.com/infoadmstudio2020-cyber/native-logger-sdk'
+                    }
+                }
+            }
+        }
+    }
+
+    // Configure task ordering without circular or recursive execution
+    tasks.matching { it.name in ['publishToMavenLocal', 'publishReleasePublicationToMavenLocal'] }.configureEach {
+        mustRunAfter(tasks.matching { it.name == 'assembleRelease' })
+    }
+}
